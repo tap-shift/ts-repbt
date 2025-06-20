@@ -1,0 +1,4 @@
+return function(Window)
+    local SettingsTab = Window:CreateTab("Settings", "settings")
+    -- Add your settings here
+end
