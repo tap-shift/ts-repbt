@@ -1,11 +1,11 @@
--- MAIN LOADER v2.0 (1st actually working)
+-- MAIN LOADER v2.0 (ORDERED TABS)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v2.0",
+    LoadingSubtitle = "Loader v2.0 (Ordered Tabs)",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -18,48 +18,44 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Correct GitHub raw links (no .lua extension)
-local TnT_Modules = {
-    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
-    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
-    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE", 
-    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
+-- Ordered module list (Farm → PvP → Player → Settings)
+local OrderedModules = {
+    {name = "Farm", url = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE"},
+    {name = "PvP", url = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE"},
+    {name = "Player", url = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE"},
+    {name = "Settings", url = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"}
 }
 
-for name, url in pairs(TnT_Modules) do
+for _, module in ipairs(OrderedModules) do
     local success, err = pcall(function()
-        local moduleSrc = game:HttpGet(url.."?t="..os.time(), true)
+        local moduleSrc = game:HttpGet(module.url.."?t="..os.time(), true)
         
-        -- More flexible content check
         if not moduleSrc:match("return function") and not moduleSrc:match("Window") then
-            -- Create placeholder tab for empty modules
-            local tab = Window:CreateTab(name, "question")
+            local tab = Window:CreateTab(module.name, "question")
             tab:CreateLabel("Module placeholder")
             tab:CreateLabel("Content coming soon!")
             return
         end
         
-        local module = loadstring(moduleSrc)()
-        if type(module) == "function" then
-            module(Window)
+        local loaded = loadstring(moduleSrc)()
+        if type(loaded) == "function" then
+            loaded(Window)
         else
-            -- Create tab even if module doesn't return correctly
-            local tab = Window:CreateTab(name, "alert-circle")
+            local tab = Window:CreateTab(module.name, "alert-circle")
             tab:CreateLabel("Module loaded with irregular structure")
         end
     end)
     
     if not success then
-        -- Create error tab but continue loading
-        local tab = Window:CreateTab(name.." (Error)", "alert-triangle")
+        local tab = Window:CreateTab(module.name.." (Error)", "alert-triangle")
         tab:CreateLabel("Load error:")
         tab:CreateLabel(tostring(err):sub(1, 50))
-        warn("["..name.." Module] "..tostring(err))
+        warn("["..module.name.." Module] "..tostring(err))
     end
     task.wait(0.5)
 end
 
--- Home Tab
+-- Home Tab (always last)
 local HomeTab = Window:CreateTab("Home", "home")
 HomeTab:CreateSection("System Status")
-HomeTab:CreateLabel("All tabs initialized successfully")
+HomeTab:CreateLabel("Tabs loaded in order: Farm → PvP → Player → Settings")
