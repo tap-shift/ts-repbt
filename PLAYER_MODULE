@@ -2,20 +2,33 @@ return function(Window)
     -- ===== PLAYER TAB =====
     local PlayerTab = Window:CreateTab("Player", "users")
     
-    -- Fixed Rayfield reference using shared variable
-    local Rayfield = shared.Rayfield
-    
+    -- Safe Rayfield reference
+    local Rayfield = shared.Rayfield or error("Rayfield library not loaded")
+
     -- Movement Section
     PlayerTab:CreateSection("Movement Settings")
 
-    -- Optimized Walkspeed System
+    -- Walkspeed System
     local CurrentWalkspeed = 16
     local WalkspeedEnabled = false
 
-    local function UpdateWalkspeed()
+    local function UpdateMovement()
         local character = game.Players.LocalPlayer.Character
-        if character and character:FindFirstChildOfClass("Humanoid") then
-            character.Humanoid.WalkSpeed = WalkspeedEnabled and CurrentWalkspeed or 16
+        if not character then return end
+        
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if not humanoid then return end
+        
+        if WalkspeedEnabled then
+            humanoid.WalkSpeed = CurrentWalkspeed
+        else
+            humanoid.WalkSpeed = 16
+        end
+        
+        if JumppowerEnabled then
+            humanoid.JumpPower = CurrentJumppower
+        else
+            humanoid.JumpPower = 50
         end
     end
 
@@ -25,7 +38,7 @@ return function(Window)
         Flag = "WalkspeedToggle",
         Callback = function(Value)
             WalkspeedEnabled = Value
-            UpdateWalkspeed()
+            UpdateMovement()
             Rayfield:Notify({
                 Title = "Walkspeed "..(Value and "Enabled" or "Disabled"),
                 Content = Value and ("Current speed: "..CurrentWalkspeed.." studs/s") or "Reset to default (16)",
@@ -43,21 +56,14 @@ return function(Window)
         Flag = "WalkspeedSlider",
         Callback = function(Value)
             CurrentWalkspeed = Value
-            if WalkspeedEnabled then UpdateWalkspeed() end
+            if WalkspeedEnabled then UpdateMovement() end
         end
     })
 
-    -- Optimized Jumppower System
+    -- Jump Settings
     PlayerTab:CreateSection("Jump Settings")
     local CurrentJumppower = 50
     local JumppowerEnabled = false
-
-    local function UpdateJumppower()
-        local character = game.Players.LocalPlayer.Character
-        if character and character:FindFirstChildOfClass("Humanoid") then
-            character.Humanoid.JumpPower = JumppowerEnabled and CurrentJumppower or 50
-        end
-    end
 
     local JumppowerToggle = PlayerTab:CreateToggle({
         Name = "Enable Jumppower",
@@ -65,7 +71,7 @@ return function(Window)
         Flag = "JumppowerToggle",
         Callback = function(Value)
             JumppowerEnabled = Value
-            UpdateJumppower()
+            UpdateMovement()
             Rayfield:Notify({
                 Title = "Jumppower "..(Value and "Enabled" or "Disabled"),
                 Content = Value and ("Current power: "..CurrentJumppower) or "Reset to default (50)",
@@ -83,13 +89,12 @@ return function(Window)
         Flag = "JumppowerSlider",
         Callback = function(Value)
             CurrentJumppower = Value
-            if JumppowerEnabled then UpdateJumppower() end
+            if JumppowerEnabled then UpdateMovement() end
         end
     })
 
     -- Collision Section
     PlayerTab:CreateSection("Collision Settings")
-
     local NoclipEnabled = false
     local noclipConnection
 
@@ -101,7 +106,6 @@ return function(Window)
             NoclipEnabled = Value
             if noclipConnection then
                 noclipConnection:Disconnect()
-                noclipConnection = nil
             end
             
             if Value then
@@ -125,8 +129,8 @@ return function(Window)
 
     -- Session Section
     PlayerTab:CreateSection("Session Settings")
-
     local afkConnection
+
     local AntiAFK = PlayerTab:CreateToggle({
         Name = "Enable Anti-AFK",
         CurrentValue = false,
@@ -134,7 +138,6 @@ return function(Window)
         Callback = function(Value)
             if afkConnection then
                 afkConnection:Disconnect()
-                afkConnection = nil
             end
             
             if Value then
@@ -158,41 +161,24 @@ return function(Window)
         end
     })
 
-    -- Automatic updates when character changes
-    local function characterAdded(character)
-        -- Wait for humanoid to load
-        local humanoid
-        for _ = 1, 20 do  -- Timeout after 2 seconds
-            humanoid = character:FindFirstChildOfClass("Humanoid")
-            if humanoid then break end
-            task.wait(0.1)
-        end
-        
-        if humanoid then
-            if WalkspeedEnabled then
-                humanoid.WalkSpeed = CurrentWalkspeed
-            end
-            if JumppowerEnabled then
-                humanoid.JumpPower = CurrentJumppower
-            end
-        end
+    -- Character handling
+    local function CharacterAdded(character)
+        task.wait(0.5) -- Wait for humanoid to load
+        UpdateMovement()
     end
 
-    -- Connect events
-    game.Players.LocalPlayer.CharacterAdded:Connect(characterAdded)
+    game.Players.LocalPlayer.CharacterAdded:Connect(CharacterAdded)
     if game.Players.LocalPlayer.Character then
-        characterAdded(game.Players.LocalPlayer.Character)
+        CharacterAdded(game.Players.LocalPlayer.Character)
     end
 
-    -- Cleanup connections
+    -- Cleanup
     game.Players.LocalPlayer.CharacterRemoving:Connect(function()
         if noclipConnection then
             noclipConnection:Disconnect()
-            noclipConnection = nil
         end
         if afkConnection then
             afkConnection:Disconnect()
-            afkConnection = nil
         end
     end)
 end
