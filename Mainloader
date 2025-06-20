@@ -1,11 +1,11 @@
--- MAIN LOADER v1.6 (FIXED MODULE LINKS)
+-- MAIN LOADER v1.7 (FIXED PLAYER_MODULE)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v1.6",
+    LoadingSubtitle = "Loader v1.7",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
