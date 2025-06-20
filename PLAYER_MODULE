@@ -17,10 +17,10 @@ return function(Window)
 
     PlayerTab:CreateToggle({
         Name = "Enable Walkspeed",
-        CurrentValue = false,
+        CurrentValue = WalkspeedEnabled,  -- Initialize with our variable
         Flag = "WalkspeedToggle",
         Callback = function(Value)
-            WalkspeedEnabled = Value
+            WalkspeedEnabled = Value  -- Store the toggle state in our variable
             UpdateWalkspeed()
         end
     })
@@ -30,17 +30,25 @@ return function(Window)
         Range = {16, 200},
         Increment = 1,
         Suffix = "studs/s",
-        CurrentValue = 16,
+        CurrentValue = CurrentWalkspeed,  -- Initialize with our variable
         Flag = "WalkspeedSlider",
         Callback = function(Value)
-            CurrentWalkspeed = Value
+            CurrentWalkspeed = Value  -- Store the slider value in our variable
             if WalkspeedEnabled then UpdateWalkspeed() end
         end
     })
 
     -- Handle character respawns
-    game.Players.LocalPlayer.CharacterAdded:Connect(function()
+    game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
         task.wait(0.5) -- Wait for humanoid to load
-        UpdateWalkspeed()
+        if WalkspeedEnabled then UpdateWalkspeed() end
     end)
+
+    -- Initialize on first load
+    if game.Players.LocalPlayer.Character then
+        task.spawn(function()
+            task.wait(0.5)
+            if WalkspeedEnabled then UpdateWalkspeed() end
+        end)
+    end
 end
