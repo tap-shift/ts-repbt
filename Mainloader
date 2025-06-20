@@ -1,0 +1,62 @@
+-- MAIN LOADER v1.4 (FIXED KEYSYSTEM CRASH)
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Store Rayfield globally for modules
+shared.Rayfield = Rayfield
+
+local Window = Rayfield:CreateWindow({
+    Name = "ReportBait.exe by TnT",
+    LoadingTitle = "Initializing...",
+    LoadingSubtitle = "Secure Loader v1.4",
+    ConfigurationSaving = true,
+    KeySystem = true,
+    KeySettings = {
+        Title = "TnT Access",
+        Subtitle = "Enter clan key",
+        Note = "Key rotates weekly",
+        FileName = "TnT_Key",
+        SaveKey = true,
+        Key = "tapshift"
+    }
+})
+
+-- Verify key system success
+if not Window then
+    Rayfield:Notify({
+        Title = "Key Rejected",
+        Content = "Invalid access key",
+        Duration = 5
+    })
+    return
+end
+
+-- Module loader with error handling
+local TnT_Modules = {
+    Player = "https://pastebin.com/raw/Xj5wDCsH",
+    Farm = "https://pastebin.com/raw/FBq59rrC",
+    PvP = "https://pastebin.com/raw/Qe8eEAPJ",
+    Settings = "https://pastebin.com/raw/NPjxSbAc"
+}
+
+for name, url in pairs(TnT_Modules) do
+    local success, err = pcall(function()
+        local module = loadstring(game:HttpGet(url.."?t="..os.time()))()
+        if type(module) == "function" then
+            module(Window)
+        end
+    end)
+    
+    if not success then
+        Rayfield:Notify({
+            Title = name.." Module Failed",
+            Content = tostring(err),
+            Duration = 5
+        })
+    end
+    task.wait(0.5) -- Prevent rate limiting
+end
+
+-- Home Tab (must be last)
+local HomeTab = Window:CreateTab("Home", "home")
+HomeTab:CreateSection("System Status")
+HomeTab:CreateLabel("All modules loaded successfully")
