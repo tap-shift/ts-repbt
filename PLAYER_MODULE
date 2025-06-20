@@ -1,0 +1,185 @@
+return function(Window)
+    -- ===== PLAYER TAB =====
+    local PlayerTab = Window:CreateTab("Player", "users")
+    
+    -- Get Rayfield reference through proper window hierarchy
+    local Rayfield = Window.Parent.Parent.Rayfield
+    
+    -- Movement Section
+    PlayerTab:CreateSection("Movement Settings")
+
+    -- Walkspeed System
+    local CurrentWalkspeed = 16
+    local WalkspeedEnabled = false
+
+    local WalkspeedToggle = PlayerTab:CreateToggle({
+        Name = "Enable Walkspeed",
+        CurrentValue = false,
+        Flag = "WalkspeedToggle",
+        Callback = function(Value)
+            WalkspeedEnabled = Value
+            local character = game.Players.LocalPlayer.Character
+            if character then
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.WalkSpeed = Value and CurrentWalkspeed or 16
+                    Rayfield:Notify({
+                        Title = "Walkspeed "..(Value and "Enabled" or "Disabled"),
+                        Content = Value and ("Current speed: "..CurrentWalkspeed.." studs/s") or "Reset to default (16)",
+                        Duration = 2.5
+                    })
+                end
+            end
+        end
+    })
+
+    local WalkspeedSlider = PlayerTab:CreateSlider({
+        Name = "Walkspeed Value",
+        Range = {16, 200},
+        Increment = 1,
+        Suffix = "studs/s",
+        CurrentValue = 16,
+        Flag = "WalkspeedSlider",
+        Callback = function(Value)
+            CurrentWalkspeed = Value
+            if WalkspeedEnabled then
+                local character = game.Players.LocalPlayer.Character
+                if character then
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        humanoid.WalkSpeed = Value
+                    end
+                end
+            end
+        end
+    })
+
+    -- Jumppower System
+    PlayerTab:CreateSection("Jump Settings")
+
+    local CurrentJumppower = 50
+    local JumppowerEnabled = false
+
+    local JumppowerToggle = PlayerTab:CreateToggle({
+        Name = "Enable Jumppower",
+        CurrentValue = false,
+        Flag = "JumppowerToggle",
+        Callback = function(Value)
+            JumppowerEnabled = Value
+            local character = game.Players.LocalPlayer.Character
+            if character then
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid.JumpPower = Value and CurrentJumppower or 50
+                    Rayfield:Notify({
+                        Title = "Jumppower "..(Value and "Enabled" or "Disabled"),
+                        Content = Value and ("Current power: "..CurrentJumppower) or "Reset to default (50)",
+                        Duration = 2.5
+                    })
+                end
+            end
+        end
+    })
+
+    local JumppowerSlider = PlayerTab:CreateSlider({
+        Name = "Jumppower Value",
+        Range = {50, 500},
+        Increment = 5,
+        Suffix = "power",
+        CurrentValue = 50,
+        Flag = "JumppowerSlider",
+        Callback = function(Value)
+            CurrentJumppower = Value
+            if JumppowerEnabled then
+                local character = game.Players.LocalPlayer.Character
+                if character then
+                    local humanoid = character:FindFirstChildOfClass("Humanoid")
+                    if humanoid then
+                        humanoid.JumpPower = Value
+                    end
+                end
+            end
+        end
+    })
+
+    -- Collision Section
+    PlayerTab:CreateSection("Collision Settings")
+
+    local NoclipEnabled = false
+    local noclipConnection
+
+    local NoclipToggle = PlayerTab:CreateToggle({
+        Name = "Enable Noclip",
+        CurrentValue = false,
+        Flag = "NoclipToggle",
+        Callback = function(Value)
+            NoclipEnabled = Value
+            if noclipConnection then
+                noclipConnection:Disconnect()
+            end
+            
+            if Value then
+                noclipConnection = game:GetService("RunService").Stepped:Connect(function()
+                    if NoclipEnabled and game.Players.LocalPlayer.Character then
+                        for _, part in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+                            if part:IsA("BasePart") then
+                                part.CanCollide = false
+                            end
+                        end
+                    end
+                end)
+            end
+            Rayfield:Notify({
+                Title = "Noclip "..(Value and "Enabled" or "Disabled"),
+                Content = Value and "You can now phase through objects" or "Collision restored",
+                Duration = 2.5
+            })
+        end
+    })
+
+    -- Session Section
+    PlayerTab:CreateSection("Session Settings")
+
+    local afkConnection
+    local AntiAFK = PlayerTab:CreateToggle({
+        Name = "Enable Anti-AFK",
+        CurrentValue = false,
+        Flag = "AntiAFK",
+        Callback = function(Value)
+            if afkConnection then
+                afkConnection:Disconnect()
+            end
+            
+            if Value then
+                local VirtualUser = game:GetService("VirtualUser")
+                afkConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                    VirtualUser:CaptureController()
+                    VirtualUser:ClickButton2(Vector2.new())
+                end)
+                Rayfield:Notify({
+                    Title = "Anti-AFK Enabled",
+                    Content = "You won't be kicked for idling",
+                    Duration = 2.5
+                })
+            else
+                Rayfield:Notify({
+                    Title = "Anti-AFK Disabled",
+                    Content = "Normal AFK rules apply",
+                    Duration = 2.5
+                })
+            end
+        end
+    })
+
+    -- Cleanup connections when character changes
+    game:GetService("Players").LocalPlayer.CharacterRemoving:Connect(function()
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
+        if afkConnection then
+            afkConnection:Disconnect()
+            afkConnection = nil
+        end
+    end)
+end
