@@ -1,11 +1,11 @@
--- MAIN LOADER v1.5 (MODULE-FRIENDLY)
+-- MAIN LOADER v1.6 (FIXED MODULE LINKS)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v1.5",
+    LoadingSubtitle = "Loader v1.6",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -18,58 +18,48 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Module loader with empty module support
+-- Correct GitHub raw links (no .lua extension)
 local TnT_Modules = {
-    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/PLAYER_MODULE",
-    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/FARM_MODULE",
-    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/PVP_MODULE",
-    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/SETTINGS_MODULE"
+    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
+    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE", 
+    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
+    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
 }
 
 for name, url in pairs(TnT_Modules) do
     local success, err = pcall(function()
-        local moduleContent = game:HttpGet(url.."?t="..os.time(), true)
+        local moduleSrc = game:HttpGet(url.."?t="..os.time(), true)
         
-        -- Handle empty modules
-        if #moduleContent < 50 then
-            -- Create basic tab for empty module
+        -- More flexible content check
+        if not moduleSrc:match("return function") and not moduleSrc:match("Window") then
+            -- Create placeholder tab for empty modules
             local tab = Window:CreateTab(name, "question")
-            tab:CreateLabel("This module is currently empty")
-            tab:CreateLabel("Coming soon in future updates!")
+            tab:CreateLabel("Module placeholder")
+            tab:CreateLabel("Content coming soon!")
             return
         end
         
-        local module = loadstring(moduleContent)()
+        local module = loadstring(moduleSrc)()
         if type(module) == "function" then
-            module(Window) -- Pass Window to module
+            module(Window)
         else
-            -- Fallback tab if module doesn't return properly
+            -- Create tab even if module doesn't return correctly
             local tab = Window:CreateTab(name, "alert-circle")
-            tab:CreateLabel("Module loaded but didn't initialize correctly")
+            tab:CreateLabel("Module loaded with irregular structure")
         end
     end)
     
     if not success then
-        -- Create error tab instead of failing completely
-        local errorTab = Window:CreateTab(name.." (Error)", "alert-triangle")
-        errorTab:CreateLabel("Failed to load module:")
-        errorTab:CreateLabel(tostring(err):sub(1, 100))
+        -- Create error tab but continue loading
+        local tab = Window:CreateTab(name.." (Error)", "alert-triangle")
+        tab:CreateLabel("Load error:")
+        tab:CreateLabel(tostring(err):sub(1, 50))
         warn("["..name.." Module] "..tostring(err))
     end
-    task.wait(0.3) -- Prevent rate limiting
+    task.wait(0.5)
 end
 
 -- Home Tab
 local HomeTab = Window:CreateTab("Home", "home")
 HomeTab:CreateSection("System Status")
-HomeTab:CreateLabel("All modules processed successfully")
-HomeTab:CreateButton({
-    Name = "Refresh Modules",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "Refresh",
-            Content = "Please re-execute to refresh modules",
-            Duration = 3
-        })
-    end
-})
+HomeTab:CreateLabel("All tabs initialized successfully")
