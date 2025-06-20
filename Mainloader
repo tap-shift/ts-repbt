@@ -20,9 +20,9 @@ local Window = Rayfield:CreateWindow({
 
 -- Correct GitHub raw links (no .lua extension)
 local TnT_Modules = {
-    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE", 
     PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
     Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
+    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE", 
     Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
 }
 
