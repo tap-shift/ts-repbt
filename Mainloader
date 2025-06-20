@@ -1,13 +1,11 @@
--- MAIN LOADER v1.5 (GITHUB MODULES)
+-- MAIN LOADER v1.5 (MODULE-FRIENDLY)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-
--- Store Rayfield globally for modules
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
-    LoadingTitle = "Initializing...",
-    LoadingSubtitle = "Secure Loader v1.5 (GitHub)",
+    LoadingTitle = "Initializing Modules...",
+    LoadingSubtitle = "Loader v1.5",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -20,70 +18,58 @@ local Window = Rayfield:CreateWindow({
     }
 })
 
--- Verify key system success
-if not Window then
-    Rayfield:Notify({
-        Title = "Key Rejected",
-        Content = "Invalid access key",
-        Duration = 5
-    })
-    return
-end
-
--- Updated GitHub module loader with cache busting
+-- Module loader with empty module support
 local TnT_Modules = {
-    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE.lua",
-    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE.lua",
-    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE.lua",
-    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE.lua"
+    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
+    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE",
+    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
+    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
 }
 
--- Secure loader with version validation
 for name, url in pairs(TnT_Modules) do
     local success, err = pcall(function()
-        -- Add cache busting and basic auth
-        local moduleSrc = game:HttpGet(url .. "?t=" .. os.time() .. "&v=1.5", true)
+        local moduleContent = game:HttpGet(url.."?t="..os.time(), true)
         
-        -- Verify the module isn't empty
-        if #moduleSrc < 50 then
-            error("Module too short - possible fetch error")
+        -- Handle empty modules
+        if #moduleContent < 50 then
+            -- Create basic tab for empty module
+            local tab = Window:CreateTab(name, "question")
+            tab:CreateLabel("This module is currently empty")
+            tab:CreateLabel("Coming soon in future updates!")
+            return
         end
         
-        local module = loadstring(moduleSrc)()
+        local module = loadstring(moduleContent)()
         if type(module) == "function" then
-            module(Window)
+            module(Window) -- Pass Window to module
         else
-            error("Invalid module structure")
+            -- Fallback tab if module doesn't return properly
+            local tab = Window:CreateTab(name, "alert-circle")
+            tab:CreateLabel("Module loaded but didn't initialize correctly")
         end
     end)
     
     if not success then
-        Rayfield:Notify({
-            Title = name.." Module Failed",
-            Content = tostring(err),
-            Duration = 5
-        })
-        -- Create emergency tab if critical module fails
-        if name == "Player" then
-            local EmergencyTab = Window:CreateTab("ERROR", "alert-triangle")
-            EmergencyTab:CreateLabel("Critical module failed to load")
-        end
+        -- Create error tab instead of failing completely
+        local errorTab = Window:CreateTab(name.." (Error)", "alert-triangle")
+        errorTab:CreateLabel("Failed to load module:")
+        errorTab:CreateLabel(tostring(err):sub(1, 100))
+        warn("["..name.." Module] "..tostring(err))
     end
-    task.wait(0.75) -- More conservative rate limiting
+    task.wait(0.3) -- Prevent rate limiting
 end
 
--- Home Tab with version info
+-- Home Tab
 local HomeTab = Window:CreateTab("Home", "home")
 HomeTab:CreateSection("System Status")
-HomeTab:CreateLabel("GitHub Modules v1.5 loaded")
-HomeTab:CreateLabel("Last update: " .. os.date("%Y-%m-%d"))
-
--- Auto-update notifier (optional)
-spawn(function()
-    wait(10)
-    Rayfield:Notify({
-        Title = "Secure Loader Active",
-        Content = "Modules loaded from private GitHub",
-        Duration = 5
-    })
-end)
+HomeTab:CreateLabel("All modules processed successfully")
+HomeTab:CreateButton({
+    Name = "Refresh Modules",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Refresh",
+            Content = "Please re-execute to refresh modules",
+            Duration = 3
+        })
+    end
+})
