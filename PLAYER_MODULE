@@ -2,15 +2,22 @@ return function(Window)
     -- ===== PLAYER TAB =====
     local PlayerTab = Window:CreateTab("Player", "users")
     
-    -- Get Rayfield reference through proper window hierarchy
-    local Rayfield = Window.Parent.Parent.Rayfield
+    -- Fixed Rayfield reference using shared variable
+    local Rayfield = shared.Rayfield
     
     -- Movement Section
     PlayerTab:CreateSection("Movement Settings")
 
-    -- Walkspeed System
+    -- Optimized Walkspeed System
     local CurrentWalkspeed = 16
     local WalkspeedEnabled = false
+
+    local function UpdateWalkspeed()
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChildOfClass("Humanoid") then
+            character.Humanoid.WalkSpeed = WalkspeedEnabled and CurrentWalkspeed or 16
+        end
+    end
 
     local WalkspeedToggle = PlayerTab:CreateToggle({
         Name = "Enable Walkspeed",
@@ -18,18 +25,12 @@ return function(Window)
         Flag = "WalkspeedToggle",
         Callback = function(Value)
             WalkspeedEnabled = Value
-            local character = game.Players.LocalPlayer.Character
-            if character then
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    humanoid.WalkSpeed = Value and CurrentWalkspeed or 16
-                    Rayfield:Notify({
-                        Title = "Walkspeed "..(Value and "Enabled" or "Disabled"),
-                        Content = Value and ("Current speed: "..CurrentWalkspeed.." studs/s") or "Reset to default (16)",
-                        Duration = 2.5
-                    })
-                end
-            end
+            UpdateWalkspeed()
+            Rayfield:Notify({
+                Title = "Walkspeed "..(Value and "Enabled" or "Disabled"),
+                Content = Value and ("Current speed: "..CurrentWalkspeed.." studs/s") or "Reset to default (16)",
+                Duration = 2.5
+            })
         end
     })
 
@@ -42,23 +43,21 @@ return function(Window)
         Flag = "WalkspeedSlider",
         Callback = function(Value)
             CurrentWalkspeed = Value
-            if WalkspeedEnabled then
-                local character = game.Players.LocalPlayer.Character
-                if character then
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        humanoid.WalkSpeed = Value
-                    end
-                end
-            end
+            if WalkspeedEnabled then UpdateWalkspeed() end
         end
     })
 
-    -- Jumppower System
+    -- Optimized Jumppower System
     PlayerTab:CreateSection("Jump Settings")
-
     local CurrentJumppower = 50
     local JumppowerEnabled = false
+
+    local function UpdateJumppower()
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChildOfClass("Humanoid") then
+            character.Humanoid.JumpPower = JumppowerEnabled and CurrentJumppower or 50
+        end
+    end
 
     local JumppowerToggle = PlayerTab:CreateToggle({
         Name = "Enable Jumppower",
@@ -66,18 +65,12 @@ return function(Window)
         Flag = "JumppowerToggle",
         Callback = function(Value)
             JumppowerEnabled = Value
-            local character = game.Players.LocalPlayer.Character
-            if character then
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    humanoid.JumpPower = Value and CurrentJumppower or 50
-                    Rayfield:Notify({
-                        Title = "Jumppower "..(Value and "Enabled" or "Disabled"),
-                        Content = Value and ("Current power: "..CurrentJumppower) or "Reset to default (50)",
-                        Duration = 2.5
-                    })
-                end
-            end
+            UpdateJumppower()
+            Rayfield:Notify({
+                Title = "Jumppower "..(Value and "Enabled" or "Disabled"),
+                Content = Value and ("Current power: "..CurrentJumppower) or "Reset to default (50)",
+                Duration = 2.5
+            })
         end
     })
 
@@ -90,15 +83,7 @@ return function(Window)
         Flag = "JumppowerSlider",
         Callback = function(Value)
             CurrentJumppower = Value
-            if JumppowerEnabled then
-                local character = game.Players.LocalPlayer.Character
-                if character then
-                    local humanoid = character:FindFirstChildOfClass("Humanoid")
-                    if humanoid then
-                        humanoid.JumpPower = Value
-                    end
-                end
-            end
+            if JumppowerEnabled then UpdateJumppower() end
         end
     })
 
@@ -116,6 +101,7 @@ return function(Window)
             NoclipEnabled = Value
             if noclipConnection then
                 noclipConnection:Disconnect()
+                noclipConnection = nil
             end
             
             if Value then
@@ -148,6 +134,7 @@ return function(Window)
         Callback = function(Value)
             if afkConnection then
                 afkConnection:Disconnect()
+                afkConnection = nil
             end
             
             if Value then
@@ -171,8 +158,34 @@ return function(Window)
         end
     })
 
-    -- Cleanup connections when character changes
-    game:GetService("Players").LocalPlayer.CharacterRemoving:Connect(function()
+    -- Automatic updates when character changes
+    local function characterAdded(character)
+        -- Wait for humanoid to load
+        local humanoid
+        for _ = 1, 20 do  -- Timeout after 2 seconds
+            humanoid = character:FindFirstChildOfClass("Humanoid")
+            if humanoid then break end
+            task.wait(0.1)
+        end
+        
+        if humanoid then
+            if WalkspeedEnabled then
+                humanoid.WalkSpeed = CurrentWalkspeed
+            end
+            if JumppowerEnabled then
+                humanoid.JumpPower = CurrentJumppower
+            end
+        end
+    end
+
+    -- Connect events
+    game.Players.LocalPlayer.CharacterAdded:Connect(characterAdded)
+    if game.Players.LocalPlayer.Character then
+        characterAdded(game.Players.LocalPlayer.Character)
+    end
+
+    -- Cleanup connections
+    game.Players.LocalPlayer.CharacterRemoving:Connect(function()
         if noclipConnection then
             noclipConnection:Disconnect()
             noclipConnection = nil
