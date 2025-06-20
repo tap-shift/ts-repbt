@@ -1,6 +1,6 @@
 return function(Window)
     local PvPTab = Window:CreateTab("PvP", "sword")
 
-    PvPTan:CreateSection("Kill Aura")
+    PvPTan:CreateSection("Kill-Aura")
 
 end
