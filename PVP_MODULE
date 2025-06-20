@@ -1,4 +1,6 @@
 return function(Window)
     local PvPTab = Window:CreateTab("PvP", "sword")
-    -- Add your PvP features here
+
+    PvPTan:CreateSection("Kill Aura")
+
 end
