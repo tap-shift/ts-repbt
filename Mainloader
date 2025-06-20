@@ -20,10 +20,10 @@ local Window = Rayfield:CreateWindow({
 
 -- Module loader with empty module support
 local TnT_Modules = {
-    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
-    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE",
-    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
-    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
+    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/PLAYER_MODULE",
+    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/FARM_MODULE",
+    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/PVP_MODULE",
+    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/raw/main/SETTINGS_MODULE"
 }
 
 for name, url in pairs(TnT_Modules) do
