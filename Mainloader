@@ -1,11 +1,11 @@
--- MAIN LOADER v2.0 (ORDERED TABS)
+-- MAIN LOADER v2.1 (UPDATED TAB ORDER)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v2.0 (Ordered Tabs)",
+    LoadingSubtitle = "Loader v2.1 (Home First)",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -17,6 +17,11 @@ local Window = Rayfield:CreateWindow({
         Key = "tapshift"
     }
 })
+
+-- Home Tab FIRST
+local HomeTab = Window:CreateTab("Home", "home")
+HomeTab:CreateSection("System Status")
+HomeTab:CreateLabel("Main system initialized")
 
 -- Ordered module list (Farm → PvP → Player → Settings)
 local OrderedModules = {
@@ -55,7 +60,6 @@ for _, module in ipairs(OrderedModules) do
     task.wait(0.5)
 end
 
--- Home Tab (always last)
-local HomeTab = Window:CreateTab("Home", "home")
-HomeTab:CreateSection("System Status")
+-- Update Home Tab after all modules load
 HomeTab:CreateLabel("Tabs loaded in order: Farm → PvP → Player → Settings")
+HomeTab:CreateLabel("System ready at "..os.date("%X"))
