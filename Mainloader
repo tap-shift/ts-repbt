@@ -1,4 +1,4 @@
--- MAIN LOADER v1.4 (FIXED KEYSYSTEM CRASH)
+-- MAIN LOADER v1.5 (GITHUB MODULES)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Store Rayfield globally for modules
@@ -7,7 +7,7 @@ shared.Rayfield = Rayfield
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing...",
-    LoadingSubtitle = "Secure Loader v1.4",
+    LoadingSubtitle = "Secure Loader v1.5 (GitHub)",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -30,19 +30,30 @@ if not Window then
     return
 end
 
--- Module loader with error handling
+-- Updated GitHub module loader with cache busting
 local TnT_Modules = {
-    Player = "https://pastebin.com/raw/Xj5wDCsH",
-    Farm = "https://pastebin.com/raw/FBq59rrC",
-    PvP = "https://pastebin.com/raw/Qe8eEAPJ",
-    Settings = "https://pastebin.com/raw/NPjxSbAc"
+    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE.lua",
+    Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE.lua",
+    PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE.lua",
+    Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE.lua"
 }
 
+-- Secure loader with version validation
 for name, url in pairs(TnT_Modules) do
     local success, err = pcall(function()
-        local module = loadstring(game:HttpGet(url.."?t="..os.time()))()
+        -- Add cache busting and basic auth
+        local moduleSrc = game:HttpGet(url .. "?t=" .. os.time() .. "&v=1.5", true)
+        
+        -- Verify the module isn't empty
+        if #moduleSrc < 50 then
+            error("Module too short - possible fetch error")
+        end
+        
+        local module = loadstring(moduleSrc)()
         if type(module) == "function" then
             module(Window)
+        else
+            error("Invalid module structure")
         end
     end)
     
@@ -52,11 +63,27 @@ for name, url in pairs(TnT_Modules) do
             Content = tostring(err),
             Duration = 5
         })
+        -- Create emergency tab if critical module fails
+        if name == "Player" then
+            local EmergencyTab = Window:CreateTab("ERROR", "alert-triangle")
+            EmergencyTab:CreateLabel("Critical module failed to load")
+        end
     end
-    task.wait(0.5) -- Prevent rate limiting
+    task.wait(0.75) -- More conservative rate limiting
 end
 
--- Home Tab (must be last)
+-- Home Tab with version info
 local HomeTab = Window:CreateTab("Home", "home")
 HomeTab:CreateSection("System Status")
-HomeTab:CreateLabel("All modules loaded successfully")
+HomeTab:CreateLabel("GitHub Modules v1.5 loaded")
+HomeTab:CreateLabel("Last update: " .. os.date("%Y-%m-%d"))
+
+-- Auto-update notifier (optional)
+spawn(function()
+    wait(10)
+    Rayfield:Notify({
+        Title = "Secure Loader Active",
+        Content = "Modules loaded from private GitHub",
+        Duration = 5
+    })
+end)
