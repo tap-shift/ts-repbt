@@ -1,11 +1,11 @@
--- MAIN LOADER v2.1 (UPDATED TAB ORDER)
+-- MAIN LOADER v2.2 (SmallFixes)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v2.1 (Release)",
+    LoadingSubtitle = "Loader v2.2 (Release)",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
