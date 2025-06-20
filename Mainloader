@@ -1,11 +1,11 @@
--- MAIN LOADER v1.9 (minimized PLAYER_MODULE)
+-- MAIN LOADER v2.0 (1st actually working)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v1.9",
+    LoadingSubtitle = "Loader v2.0",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -20,9 +20,9 @@ local Window = Rayfield:CreateWindow({
 
 -- Correct GitHub raw links (no .lua extension)
 local TnT_Modules = {
-    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
     Farm = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/FARM_MODULE", 
     PvP = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PVP_MODULE",
+    Player = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/PLAYER_MODULE",
     Settings = "https://raw.githubusercontent.com/tap-shift/ts-repbt/main/SETTINGS_MODULE"
 }
 
