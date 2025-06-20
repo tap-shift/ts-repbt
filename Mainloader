@@ -61,5 +61,5 @@ for _, module in ipairs(OrderedModules) do
 end
 
 -- Update Home Tab after all modules load
-HomeTab:CreateLabel("Tabs loaded in order: Farm → PvP → Player → Settings")
+HomeTab:CreateLabel("Tabs loaded successfully.")
 HomeTab:CreateLabel("System ready at "..os.date("%X"))
