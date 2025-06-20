@@ -15,40 +15,43 @@ return function(Window)
         end
     end
 
-    PlayerTab:CreateToggle({
+    -- Create the toggle first
+    local Toggle = PlayerTab:CreateToggle({
         Name = "Enable Walkspeed",
-        CurrentValue = WalkspeedEnabled,  -- Initialize with our variable
+        CurrentValue = WalkspeedEnabled,
         Flag = "WalkspeedToggle",
         Callback = function(Value)
-            WalkspeedEnabled = Value  -- Store the toggle state in our variable
+            WalkspeedEnabled = Value
             UpdateWalkspeed()
         end
     })
 
+    -- Then create the slider
     PlayerTab:CreateSlider({
         Name = "Walkspeed Value",
         Range = {16, 200},
         Increment = 1,
         Suffix = "studs/s",
-        CurrentValue = CurrentWalkspeed,  -- Initialize with our variable
+        CurrentValue = CurrentWalkspeed,
         Flag = "WalkspeedSlider",
         Callback = function(Value)
-            CurrentWalkspeed = Value  -- Store the slider value in our variable
-            if WalkspeedEnabled then UpdateWalkspeed() end
+            CurrentWalkspeed = Value
+            if Toggle.CurrentValue then  -- Reference the toggle's current value directly
+                UpdateWalkspeed()
+            end
         end
     })
 
-    -- Handle character respawns
-    game.Players.LocalPlayer.CharacterAdded:Connect(function(character)
-        task.wait(0.5) -- Wait for humanoid to load
-        if WalkspeedEnabled then UpdateWalkspeed() end
-    end)
+    -- Handle character changes
+    local function CharacterAdded(character)
+        task.wait(0.5)
+        if Toggle.CurrentValue then
+            UpdateWalkspeed()
+        end
+    end
 
-    -- Initialize on first load
+    game.Players.LocalPlayer.CharacterAdded:Connect(CharacterAdded)
     if game.Players.LocalPlayer.Character then
-        task.spawn(function()
-            task.wait(0.5)
-            if WalkspeedEnabled then UpdateWalkspeed() end
-        end)
+        CharacterAdded(game.Players.LocalPlayer.Character)
     end
 end
