@@ -1,0 +1,4 @@
+return function(Window)
+    local FarmTab = Window:CreateTab("Farm", "sprout")
+    -- Add your farm features here
+end
