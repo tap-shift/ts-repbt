@@ -1,4 +1,6 @@
 return function(Window)
     local SettingsTab = Window:CreateTab("Settings", "settings")
-    -- Add your settings here
+
+    SettingsTab:CreateSection("Coming Soon")
+
 end
