@@ -1,4 +1,6 @@
 return function(Window)
     local PlayerTab = Window:CreateTab("Player", "users")
-    -- functions here
+
+    PlayerTab:CreateSection("Movement")
+
 end
