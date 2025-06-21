@@ -1,52 +1,30 @@
 return function(Window)
     local PlayerTab = Window:CreateTab("Player", "users")
+    local VirtualUser = game:GetService("VirtualUser")
+    local Players = game:GetService("Players")
+    local player = Players.LocalPlayer
 
     PlayerTab:CreateSection("Movement")
 
     PlayerTab:CreateSection("Anti Kick for Idle")
+    local AntiAFK_Connection
 
-getgenv().AntiAFKConnection = nil
-PlayerTab:CreateToggle({
-    Name = "Anti-AFK",
-    CurrentValue = false,
-    Flag = "AntiAFK",
-    Callback = function(Value)
-        if getgenv().AntiAFKConnection then
-            getgenv().AntiAFKConnection:Disconnect()
-            getgenv().AntiAFKConnection = nil
-        end
-
-        if Value then
-            getgenv().AntiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-                game:GetService("VirtualUser"):CaptureController()
-                game:GetService("VirtualUser"):ClickButton2(Vector2.new())
-            end)
-
-            Rayfield:Notify({
-                Title = "Anti-AFK: ON",
-                Content = "You won't be kicked for idling",
-                Duration = 3,
-                Image = 6023426915
-            })
-        else
-            Rayfield:Notify({
-                Title = "Anti-AFK: OFF",
-                Content = "Normal AFK rules apply",
-                Duration = 3,
-                Image = 6022668888
-            })
-        end
-    end,
-})
-
-game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
-    if getgenv().AntiAFKConnection then
-        getgenv().AntiAFKConnection:Disconnect()
-    end
-    if Tab.Flags and Tab.Flags["AntiAFK"] then
-        getgenv().AntiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            game:GetService("VirtualUser"):CaptureController()
-            game:GetService("VirtualUser"):ClickButton2(Vector2.new())
-        end)
-    end
-end)
+    local Toggle = PlayerTab:CreateToggle({
+        Name = "Anti-AFK",
+        CurrentValue = false,
+        Flag = "AntiAFKToggle",
+        Callback = function(Value)
+            if Value then
+                AntiAFK_Connection = player.Idled:Connect(function()
+                    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                    task.wait(1)
+                    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+                end)
+            else
+                if AntiAFK_Connection then
+                    AntiAFK_Connection:Disconnect()
+                    AntiAFK_Connection = nil
+                end
+            end
+        end,
+    })
