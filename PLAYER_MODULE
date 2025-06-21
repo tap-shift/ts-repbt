@@ -4,58 +4,48 @@ return function(Window)
     PlayerTab:CreateSection("Movement")
 
     PlayerTab:CreateSection("Anti Kick for Idle")
-local AntiAFKToggle = PlayerTab:CreateToggle({
+
+PlayerTab:CreateToggle({
     Name = "Anti-AFK",
     CurrentValue = false,
     Flag = "AntiAFK",
     Callback = function(Value)
-        -- Proper variable to track connection
-        if not AntiAFKToggle.Connection then
-            AntiAFKToggle.Connection = nil
+        if getgenv().AntiAFKConnection then
+            getgenv().AntiAFKConnection:Disconnect()
+            getgenv().AntiAFKConnection = nil
         end
-        
+
         if Value then
-            -- Enable Anti-AFK
-            local VirtualUser = game:GetService("VirtualUser")
-            AntiAFKToggle.Connection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-                VirtualUser:CaptureController()
-                VirtualUser:ClickButton2(Vector2.new())
+            getgenv().AntiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                game:GetService("VirtualUser"):CaptureController()
+                game:GetService("VirtualUser"):ClickButton2(Vector2.new())
             end)
-            
+
             Rayfield:Notify({
                 Title = "Anti-AFK: ON",
                 Content = "You won't be kicked for idling",
                 Duration = 3,
-                Image = 6023426915  -- Check icon
+                Image = 6023426915
             })
         else
-            -- Disable Anti-AFK
-            if AntiAFKToggle.Connection then
-                AntiAFKToggle.Connection:Disconnect()
-                AntiAFKToggle.Connection = nil
-            end
-            
             Rayfield:Notify({
                 Title = "Anti-AFK: OFF",
                 Content = "Normal AFK rules apply",
                 Duration = 3,
-                Image = 6022668888  -- X icon
+                Image = 6022668888
             })
         end
-    end
+    end,
 })
 
--- Cleanup when character respawns
 game:GetService("Players").LocalPlayer.CharacterAdded:Connect(function()
-    if AntiAFKToggle.CurrentValue then
-        -- Reconnect if still enabled
-        local VirtualUser = game:GetService("VirtualUser")
-        if AntiAFKToggle.Connection then
-            AntiAFKToggle.Connection:Disconnect()
-        end
-        AntiAFKToggle.Connection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
+    if getgenv().AntiAFKConnection then
+        getgenv().AntiAFKConnection:Disconnect()
+    end
+    if Tab.Flags and Tab.Flags["AntiAFK"] then
+        getgenv().AntiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+            game:GetService("VirtualUser"):CaptureController()
+            game:GetService("VirtualUser"):ClickButton2(Vector2.new())
         end)
     end
 end)
