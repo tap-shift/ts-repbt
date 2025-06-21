@@ -3,30 +3,30 @@ return function(Window)
 
     PlayerTab:CreateSection("Anti Idle Kick")
 
-local Toggle = PlayerTab:CreateToggle({
+local afkEnabled = false
+
+local function antiAFK()
+    while afkEnabled do
+        -- Simulate key press to prevent AFK
+        game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
+        wait(0.1)
+        game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
+        wait(29) -- Wait 29 seconds before next input (Roblox AFK timer is ~30s)
+    end
+end
+
+local Toggle = Tab:CreateToggle({
     Name = "Anti-AFK",
     CurrentValue = false,
     Flag = "AntiAFKToggle",
     Callback = function(Value)
+        afkEnabled = Value
         if Value then
-            -- Enable anti-AFK
-            antiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
-                -- This fires when the player is AFK
-                game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
-                wait(0.1)
-                game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
-            end)
+            coroutine.wrap(antiAFK)()
             print("Anti-AFK enabled")
         else
-            -- Disable anti-AFK
-            if antiAFKConnection then
-                antiAFKConnection:Disconnect()
-                antiAFKConnection = nil
-                print("Anti-AFK disabled")
-            end
+            print("Anti-AFK disabled")
         end
     end,
 })
-
-
 end
