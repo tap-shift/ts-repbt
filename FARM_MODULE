@@ -1,22 +1,24 @@
 return function(Window)
     local FarmTab = Window:CreateTab("Farm", "sprout")
-
     FarmTab:CreateSection("Coins")
+
+    local actionEnabled = false
+
+    local function sendCoinEvent()
+        while actionEnabled do
+            game:GetService("ReplicatedStorage").Events.CoinEvent:FireServer()
+            wait(0.1)
+        end
+    end
 
     local Toggle = FarmTab:CreateToggle({
        Name = "Auto Coin Collect",
        CurrentValue = false,
        Flag = "Toggle1",
        Callback = function(Value)
+           actionEnabled = Value
            if Value then
-               _G.CoinInterval = game:GetService("RunService").Heartbeat:Connect(function()
-                   game:GetService("ReplicatedStorage").Events.CoinEvent:FireServer()
-               end)
-           else
-               if _G.CoinInterval then
-                   _G.CoinInterval:Disconnect()
-                   _G.CoinInterval = nil
-               end
+               coroutine.wrap(sendCoinEvent)()
            end
        end,
     })
