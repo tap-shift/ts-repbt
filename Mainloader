@@ -4,7 +4,7 @@ local Window = Rayfield:CreateWindow({
    Name = "ReportBait.exe by TnT",
    Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "Initializing Modules...",
-   LoadingSubtitle = "Loader v2.6 (Release)",
+   LoadingSubtitle = "Loader v2.7 (Release & Small changes)",
    ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
    Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
@@ -20,8 +20,8 @@ local Window = Rayfield:CreateWindow({
    },
 
    Discord = {
-      Enabled = false, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "noinvitelink", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
+      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
+      Invite = "https://discord.gg/YWj4PHWcjV", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
       RememberJoins = true -- Set this to false to make them join the discord every time they load it up
    },
 
@@ -84,7 +84,7 @@ end
 
 HomeTab:CreateLabel("Tabs loaded successfully.")
 HomeTab:CreateLabel("System ready at "..os.date("%X"))
-HomeTab:CreateLabel("Version: v2.6")
+HomeTab:CreateLabel("Version: v2.7")
 
 HomeTab:CreateSection("Community")
 HomeTab:CreateLabel("https://discord.gg/YWj4PHWcjV")
