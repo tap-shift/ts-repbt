@@ -3,4 +3,31 @@ return function(Window)
 
     PlayerTab:CreateSection("Movement")
 
+    PlayerTab:CreateSection("Anti Idle Kick")
+local Toggle = Tab:CreateToggle({
+    Name = "Anti-AFK",
+    CurrentValue = false,
+    Flag = "AntiAFKToggle",
+    Callback = function(Value)
+        if Value then
+            -- Enable anti-AFK
+            antiAFKConnection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                -- This fires when the player is AFK
+                game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
+                wait(0.1)
+                game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
+            end)
+            print("Anti-AFK enabled")
+        else
+            -- Disable anti-AFK
+            if antiAFKConnection then
+                antiAFKConnection:Disconnect()
+                antiAFKConnection = nil
+                print("Anti-AFK disabled")
+            end
+        end
+    end,
+})
+
+
 end
