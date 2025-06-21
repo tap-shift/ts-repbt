@@ -5,6 +5,7 @@ return function(Window)
 
     PlayerTab:CreateSection("Anti Kick for Idle")
 
+getgenv().AntiAFKConnection = nil
 PlayerTab:CreateToggle({
     Name = "Anti-AFK",
     CurrentValue = false,
