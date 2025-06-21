@@ -15,7 +15,7 @@ local function antiAFK()
     end
 end
 
-local Toggle = Tab:CreateToggle({
+local Toggle = PlayerTab:CreateToggle({
     Name = "Anti-AFK",
     CurrentValue = false,
     Flag = "AntiAFKToggle",
