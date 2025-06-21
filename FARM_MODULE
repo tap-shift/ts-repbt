@@ -23,27 +23,4 @@ return function(Window)
        end,
     })
 
-local Toggle = FarmTab:CreateToggle({
-   Name = "Dummy Damage",
-   CurrentValue = false,
-   Flag = "DummyDamageToggle",
-   Callback = function(Value)
-       if Value then
-           _G.DummyDamageInterval = game:GetService("RunService").Heartbeat:Connect(function()
-               if workspace.MAP.dummies:FindFirstChild("Dummy") then
-                   game:GetService("ReplicatedStorage").jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(
-                       workspace.MAP.dummies.Dummy.Humanoid,
-                       14
-                   )
-               end
-           end)
-       else
-           if _G.DummyDamageInterval then
-               _G.DummyDamageInterval:Disconnect()
-               _G.DummyDamageInterval = nil
-           end
-       end
-   end,
-})
-
 end
