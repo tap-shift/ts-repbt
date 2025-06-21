@@ -7,11 +7,10 @@ local afkEnabled = false
 
 local function antiAFK()
     while afkEnabled do
-        -- Simulate key press to prevent AFK
         game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
         wait(0.1)
         game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
-        wait(29) -- Wait 29 seconds before next input (Roblox AFK timer is ~30s)
+        wait(29)
     end
 end
 
