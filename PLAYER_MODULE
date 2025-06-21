@@ -3,4 +3,43 @@ return function(Window)
 
     PlayerTab:CreateSection("Movement")
 
+    PlayerTab:CreateSection("Anti Kick for Idle")
+    local AntiAFKToggle = PlayerTab:CreateToggle({
+    Name = "Anti-AFK",
+    CurrentValue = false,
+    Flag = "AntiAFK",
+    Callback = function(Value)
+        if Value then
+            -- Enable Anti-AFK
+            local VirtualUser = game:GetService("VirtualUser")
+            local connection
+            connection = game:GetService("Players").LocalPlayer.Idled:Connect(function()
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new())
+            end)
+            
+            -- Store connection to disconnect later
+            AntiAFKToggle.Connection = connection
+            
+            Window:Notify({
+                Title = "Anti-AFK",
+                Content = "Enabled",
+                Duration = 6.5,
+                Image = "power"  -- on icon
+            })
+        else
+            -- Disable Anti-AFK
+            if AntiAFKToggle.Connection then
+                AntiAFKToggle.Connection:Disconnect()
+            end
+            
+            Window:Notify({
+                Title = "Anti-AFK",
+                Content = "Disabled",
+                Duration = 6.5,
+                Image = "power-off"  -- off icon
+            })
+        end
+    end
+})
 end
