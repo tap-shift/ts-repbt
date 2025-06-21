@@ -63,13 +63,8 @@ end
 -- Update Home Tab after all modules load
 HomeTab:CreateLabel("Tabs loaded successfully.")
 HomeTab:CreateLabel("System ready at "..os.date("%X"))
+HomeTab:CreateLabel("Version: v2.4")
 
 -- Discord Section
 HomeTab:CreateSection("Community")
-
-HomeTab:CreateButton({
-    Name = "Join Discord",
-    Callback = function()
-        game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/YWj4PHWcjV")
-    end
-})
+HomeTab:CreateLabel("https://discord.gg/YWj4PHWcjV")
