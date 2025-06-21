@@ -67,8 +67,8 @@ HomeTab:CreateLabel("System ready at "..os.date("%X"))
 HomeTab:CreateSection("Information")
 HomeTab:CreateLabel("Discord Server")
 
-local Button = Tab:CreateButton({
-   Name = "Join Our Discord",
+local Button = HomeTab:CreateButton({
+   Name = " Join ",
    Callback = function()
        -- Open Discord invite in system browser
        local http = game:GetService("HttpService")
