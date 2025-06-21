@@ -2,5 +2,24 @@ return function(Window)
     local FarmTab = Window:CreateTab("Farm", "sprout")
 
     FarmTab:CreateSection("Coins")
-
+local Toggle = Tab:CreateToggle({
+   Name = "Auto Coin Collect",
+   CurrentValue = false,
+   Flag = "Toggle1",
+   Callback = function(Value)
+       -- Erstelle eine Variable, um das Intervall zu speichern
+       if Value then
+           -- Toggle ist aktiviert - starte das Intervall
+           _G.CoinInterval = game:GetService("RunService").Heartbeat:Connect(function()
+               game:GetService("ReplicatedStorage").Events.CoinEvent:FireServer()
+           end)
+       else
+           -- Toggle ist deaktiviert - stoppe das Intervall
+           if _G.CoinInterval then
+               _G.CoinInterval:Disconnect()
+               _G.CoinInterval = nil
+           end
+       end
+   end,
+})
 end
