@@ -4,7 +4,7 @@ return function(Window)
     PlayerTab:CreateSection("Movement")
 
     PlayerTab:CreateSection("Anti Idle Kick")
-local Toggle = Tab:CreateToggle({
+local Toggle = PlayerTab:CreateToggle({
     Name = "Anti-AFK",
     CurrentValue = false,
     Flag = "AntiAFKToggle",
