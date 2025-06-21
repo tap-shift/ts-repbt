@@ -22,4 +22,9 @@ return function(Window)
            end
        end,
     })
+
+    FarmTab:CreateSection("Bosses")
+
+
+
 end
