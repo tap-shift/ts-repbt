@@ -7,10 +7,11 @@ local afkEnabled = false
 
 local function antiAFK()
     while afkEnabled do
-        game:GetService("VirtualInputManager"):SendKeyEvent(true, "Space", false, game)
+        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0, 0, 0, true, game, 1)
         wait(0.1)
-        game:GetService("VirtualInputManager"):SendKeyEvent(false, "Space", false, game)
-        wait(29)
+        game:GetService("VirtualInputManager"):SendMouseButtonEvent(0, 0, 0, false, game, 1)
+        
+        wait(600)
     end
 end
 
@@ -28,4 +29,5 @@ local Toggle = PlayerTab:CreateToggle({
         end
     end,
 })
+
 end
