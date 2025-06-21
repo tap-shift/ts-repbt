@@ -66,69 +66,10 @@ HomeTab:CreateLabel("System ready at "..os.date("%X"))
 
 -- Discord Section
 HomeTab:CreateSection("Community")
-HomeTab:CreateLabel("Join our Discord for updates and support!")
 
-local DiscordButton = HomeTab:CreateButton({
-    Name = " Join Discord Server ",
+HomeTab:CreateButton({
+    Name = "Join Discord",
     Callback = function()
-        -- Try to open in Discord desktop app first
-        local discordAppSuccess = false
-        local http = game:GetService("HttpService")
-        
-        -- First attempt: Discord RPC
-        discordAppSuccess = pcall(function()
-            http:RequestAsync({
-                Url = "http://127.0.0.1:6463/rpc?v=1",
-                Method = "POST",
-                Headers = {
-                    ["Content-Type"] = "application/json",
-                    ["Origin"] = "https://discord.com"
-                },
-                Body = http:JSONEncode({
-                    cmd = "INVITE_BROWSER",
-                    args = { code = "YWj4PHWcjV" },
-                    nonce = http:GenerateGUID(false)
-                })
-            })
-        end)
-        
-        -- Second attempt: Direct browser fallback
-        if not discordAppSuccess then
-            local browserSuccess = pcall(function()
-                game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/YWj4PHWcjV")
-            end)
-            
-            -- Third attempt: Alternative browser method
-            if not browserSuccess then
-                pcall(function()
-                    game:GetService("StarterGui"):SetCore("OpenBrowserWindow", {
-                        Url = "https://discord.gg/YWj4PHWcjV"
-                    })
-                end)
-            end
-            
-            -- User feedback
-            game:GetService("StarterGui"):SetCore("SendNotification", {
-                Title = "Discord Invite",
-                Text = "Opening browser...",
-                Icon = "http://www.roblox.com/asset/?id=9334666836", -- Discord icon
-                Duration = 3
-            })
-        end
-    end,
-    Interact = 'Click'
-})
-
--- Visual styling (if supported by your UI library)
-if DiscordButton.SetButtonStyle then
-    DiscordButton:SetButtonStyle({
-        BackgroundColor3 = Color3.fromRGB(88, 101, 242), -- Discord blurple
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        HoverBackgroundColor3 = Color3.fromRGB(71, 82, 196)
-    })
-    
-    -- Add Discord logo icon if supported
-    if DiscordButton.SetIcon then
-        DiscordButton:SetIcon("rbxassetid://9334666836") -- Discord icon ID
+        game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/YWj4PHWcjV")
     end
-end
+})
