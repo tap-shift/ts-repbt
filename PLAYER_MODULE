@@ -1,8 +1,5 @@
 return function(Window)
     local PlayerTab = Window:CreateTab("Player", "users")
-    local VirtualUser = game:GetService("VirtualUser")
-    local Players = game:GetService("Players")
-    local player = Players.LocalPlayer
 
     PlayerTab:CreateSection("Movement")
 
