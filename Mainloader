@@ -1,11 +1,11 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "ReportBait.exe by TnT",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
+   Name = "Animal Simulator - tapshift hub",
+   Icon = "paw-print", -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
    LoadingTitle = "Initializing Modules...",
-   LoadingSubtitle = "Loader v2.7 (Release & Small changes)",
-   ShowText = "Rayfield", -- for mobile users to unhide rayfield, change if you'd like
+   LoadingSubtitle = "Loader v2.8 (Update & Rename)",
+   ShowText = "tapshift", -- for mobile users to unhide rayfield, change if you'd like
    Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
 
    ToggleUIKeybind = "V", -- The keybind to toggle the UI visibility (string like "K" or Enum.KeyCode)
@@ -27,7 +27,7 @@ local Window = Rayfield:CreateWindow({
 
    KeySystem = true, -- Set this to true to use our key system
    KeySettings = {
-      Title = "TnT Access",
+      Title = "Access",
       Subtitle = "Enter clan key",
       Note = "Key rotates weekly", -- Use this to tell the user how to get a key
       FileName = "TnT_Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
@@ -84,7 +84,11 @@ end
 
 HomeTab:CreateLabel("Tabs loaded successfully.")
 HomeTab:CreateLabel("System ready at "..os.date("%X"))
-HomeTab:CreateLabel("Version: v2.7")
+HomeTab:CreateLabel("Version: v2.8")
 
 HomeTab:CreateSection("Community")
 HomeTab:CreateLabel("https://discord.gg/YWj4PHWcjV")
+
+HomeTab:CreateSection("General")
+HomeTab:CreateLabel("tapshift on top")
+HomeTab:CreateLabel("Credits to Frite for helping me :3")
