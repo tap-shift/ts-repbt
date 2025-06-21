@@ -1,11 +1,11 @@
--- MAIN LOADER v2.2 (SmallFixes)
+-- MAIN LOADER v2.3 (SmallFixes)
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 shared.Rayfield = Rayfield
 
 local Window = Rayfield:CreateWindow({
     Name = "ReportBait.exe by TnT",
     LoadingTitle = "Initializing Modules...",
-    LoadingSubtitle = "Loader v2.2 (Release)",
+    LoadingSubtitle = "Loader v2.3 (Release)",
     ConfigurationSaving = true,
     KeySystem = true,
     KeySettings = {
@@ -63,3 +63,46 @@ end
 -- Update Home Tab after all modules load
 HomeTab:CreateLabel("Tabs loaded successfully.")
 HomeTab:CreateLabel("System ready at "..os.date("%X"))
+
+HomeTab:CreateSection("Information")
+HomeTab:CreateLabel("Discord Server")
+
+local Button = Tab:CreateButton({
+   Name = "Join Our Discord",
+   Callback = function()
+       -- Open Discord invite in system browser
+       local http = game:GetService("HttpService")
+       local success, err = pcall(function()
+           http:RequestAsync({
+               Url = "http://127.0.0.1:6463/rpc?v=1",
+               Method = "POST",
+               Headers = {
+                   ["Content-Type"] = "application/json",
+                   ["Origin"] = "https://discord.com"
+               },
+               Body = http:JSONEncode({
+                   cmd = "INVITE_BROWSER",
+                   args = {
+                       code = "YWj4PHWcjV"
+                   },
+                   nonce = http:GenerateGUID(false)
+               })
+           })
+       end)
+       
+       -- Fallback to regular browser if Discord app fails
+       if not success then
+           game:GetService("StarterGui"):SetCore("SendNotification", {
+               Title = "Opening Browser",
+               Text = "Redirecting to Discord...",
+               Duration = 3
+           })
+           local success2 = pcall(function()
+               game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/YWj4PHWcjV")
+           end)
+           if not success2 then
+               game:GetService("GuiService"):OpenBrowserWindow("https://discord.gg/YWj4PHWcjV")
+           end
+       end
+   end,
+})
