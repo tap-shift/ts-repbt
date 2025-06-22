@@ -25,7 +25,7 @@ return function(Window)
 
     FarmTab:CreateSection("Bosses")
 
-local Toggle = Tab:CreateToggle({
+local Toggle = FarmTab:CreateToggle({
     Name = "LavaGorilla Killer",
     CurrentValue = false,
     Flag = "GorillaKillToggle",
