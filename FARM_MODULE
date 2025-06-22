@@ -26,21 +26,21 @@ return function(Window)
     FarmTab:CreateSection("Bosses")
 
 local Toggle = FarmTab:CreateToggle({
-    Name = "LavaGorilla Killer",
+    Name = "Auto Boss Kill",
     CurrentValue = false,
-    Flag = "GorillaKillToggle",
+    Flag = "BossKillToggle",
     Callback = function(Value)
         if Value then
-            _G.GorillaLoop = game:GetService("RunService").Heartbeat:Connect(function()
-                game:GetService("ReplicatedStorage").jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(
-                    workspace.NPC.LavaGorilla.Humanoid,
+            _G.BossLoop = game:GetService("RunService").Heartbeat:Connect(function()
+                local args = {
+                    workspace.NPC.CENTAUR.Humanoid,
                     1
-                )
+                }
+                game:GetService("ReplicatedStorage").jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(unpack(args))
             end)
         else
-            if _G.GorillaLoop then
-                _G.GorillaLoop:Disconnect()
-                _G.GorillaLoop = nil
+            if _G.BossLoop then
+                _G.BossLoop:Disconnect()
             end
         end
     end
