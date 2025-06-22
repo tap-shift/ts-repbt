@@ -25,6 +25,25 @@ return function(Window)
 
     FarmTab:CreateSection("Bosses")
 
-
+local Toggle = FarmTab:CreateToggle({
+    Name = "Auto Boss Kill",
+    CurrentValue = false,
+    Flag = "BossKillToggle",
+    Callback = function(Value)
+        if Value then
+            _G.BossLoop = game:GetService("RunService").Heartbeat:Connect(function()
+                local args = {
+                    workspace.NPC.CENTAUR.Humanoid,
+                    1
+                }
+                game:GetService("ReplicatedStorage").jdskhfsIIIllliiIIIdchgdIiIIIlIlIli:FireServer(unpack(args))
+            end)
+        else
+            if _G.BossLoop then
+                _G.BossLoop:Disconnect()
+            end
+        end
+    end
+})
 
 end
